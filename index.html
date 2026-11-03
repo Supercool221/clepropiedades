@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLÉ Propiedades | Gestión e Inmobiliaria</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Playfair Display -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#0f172a',
+                            900: '#0b1329',
+                            950: '#050a17',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#d97706',
+                            600: '#b45309',
+                        },
+                        emeraldCustom: '#059669',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .custom-shadow {
+            box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.15);
+        }
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen">
+
+    <!-- Top Notification Bar / Mode Switcher -->
+    <div class="bg-navy-950 text-slate-300 py-2 px-4 text-xs sm:text-sm border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-4">
+                <span class="flex items-center gap-1"><i class="fa-solid fa-phone text-gold-400"></i> +56 9 1234 5678</span>
+                <span class="hidden md:flex items-center gap-1"><i class="fa-solid fa-envelope text-gold-400"></i> contacto@clepropiedades.cl</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-slate-400">Vista actual:</span>
+                <button id="toggleAdminBtn" onclick="toggleViewMode()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 py-1 rounded-full text-xs transition border border-slate-700 flex items-center gap-1.5 shadow-inner">
+                    <i class="fa-solid fa-user-shield text-gold-400"></i>
+                    <span id="viewModeText">Cambiar a Modo Administrador</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-navy-900 text-white shadow-xl relative z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="filterType('todos')">
+                    <div class="w-10 h-10 bg-gradient-to-tr from-gold-600 to-gold-400 rounded-lg flex items-center justify-center text-navy-950 font-serif font-bold text-xl shadow-lg">
+                        CLÉ
+                    </div>
+                    <div>
+                        <span class="font-serif font-bold text-2xl tracking-wide text-white block leading-none">CLÉ</span>
+                        <span class="text-[10px] tracking-widest text-gold-400 uppercase font-semibold">Propiedades</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex items-center gap-8 font-medium text-sm">
+                    <a href="#catalogo" onclick="filterType('todos')" class="hover:text-gold-400 transition">Propiedades</a>
+                    <a href="#catalogo" onclick="filterType('venta')" class="hover:text-gold-400 transition">En Venta</a>
+                    <a href="#catalogo" onclick="filterType('arriendo')" class="hover:text-gold-400 transition">En Arriendo</a>
+                    <a href="#publica" class="hover:text-gold-400 transition">Publica con Nosotros</a>
+                    <a href="#contacto" class="hover:text-gold-400 transition">Contacto</a>
+                </nav>
+
+                <!-- Admin Action Button / Quick Add -->
+                <div class="flex items-center gap-3">
+                    <button id="navAddPropBtn" onclick="openPropertyModal()" class="hidden bg-emeraldCustom hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Nueva Propiedad
+                    </button>
+                    <a href="https://wa.me/56912345678?text=Hola,%20deseo%20consultar%20por%20sus%20servicios%20inmobiliarios" target="_blank" class="bg-gold-500 hover:bg-gold-600 text-navy-950 font-semibold px-4 py-2 rounded-lg text-sm transition shadow-md hidden sm:flex items-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Asesoría Express
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative bg-navy-900 text-white py-16 lg:py-24 overflow-hidden border-b border-slate-800">
+        <div class="absolute inset-0 z-0 opacity-20 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=80');"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-900/90 to-transparent z-0"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <span class="inline-block bg-gold-500/20 text-gold-400 border border-gold-500/30 font-semibold text-xs tracking-wider uppercase px-4 py-1.5 rounded-full mb-4">
+                Encuentra tu lugar ideal
+            </span>
+            <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
+                Gestión Inmobiliaria Transparente y Profesional
+            </h1>
+            <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto mb-10">
+                Explora nuestra selección exclusiva de casas y departamentos en venta y arriendo con acompañamiento personalizado de principio a fin.
+            </p>
+
+            <!-- Search & Filter Bar -->
+            <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-2xl text-slate-800 max-w-4xl mx-auto glass-card">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Tipo Operación -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1 text-left">Operación</label>
+                        <select id="filterOperation" onchange="applyFilters()" class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-900 font-medium">
+                            <option value="todos">Todas (Venta y Arriendo)</option>
+                            <option value="Venta">Solo Venta</option>
+                            <option value="Arriendo">Solo Arriendo</option>
+                        </select>
+                    </div>
+
+                    <!-- Dormitorios -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1 text-left">Dormitorios</label>
+                        <select id="filterBedrooms" onchange="applyFilters()" class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-900 font-medium">
+                            <option value="todos">Cualquier cantidad</option>
+                            <option value="1">1+ Dormitorio</option>
+                            <option value="2">2+ Dormitorios</option>
+                            <option value="3">3+ Dormitorios</option>
+                            <option value="4">4+ Dormitorios</option>
+                        </select>
+                    </div>
+
+                    <!-- Búsqueda Texto -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1 text-left">Ubicación / Palabra clave</label>
+                        <input type="text" id="filterSearch" onkeyup="applyFilters()" placeholder="Ej. Las Condes, Santiago..." class="w-full bg-slate-100 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-navy-900">
+                    </div>
+
+                    <!-- Botón Limpiar -->
+                    <div class="flex items-end">
+                        <button onclick="resetFilters()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-rotate-left"></i> Restablecer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full" id="catalogo">
+        
+        <!-- Section Title & Admin Controls Indicator -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-slate-200 gap-4">
+            <div>
+                <h2 class="font-serif text-2xl sm:text-3xl font-bold text-navy-900">Catálogo de Propiedades</h2>
+                <p class="text-slate-500 text-sm mt-1" id="catalogSubtitle">Explora las publicaciones disponibles actualmente</p>
+            </div>
+            
+            <div id="adminBadge" class="hidden bg-amber-50 border border-amber-300 text-amber-800 text-xs px-3 py-2 rounded-lg flex items-center justify-between gap-4">
+                <span class="font-semibold flex items-center gap-2"><i class="fa-solid fa-user-gear text-amber-600"></i> Modo Administrador Activo</span>
+                <button onclick="openPropertyModal()" class="bg-navy-900 hover:bg-navy-800 text-white px-3 py-1.5 rounded-md text-xs font-semibold transition">
+                    + Agregar Propiedad
+                </button>
+            </div>
+        </div>
+
+        <!-- Property Grid Container -->
+        <div id="propertiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Dynamic items rendered here via JS -->
+        </div>
+
+        <!-- Empty state message -->
+        <div id="noResults" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-slate-300">
+            <i class="fa-solid fa-building-circle-exclamation text-4xl text-slate-300 mb-3"></i>
+            <h3 class="text-lg font-bold text-slate-700">No se encontraron propiedades</h3>
+            <p class="text-slate-500 text-sm mt-1">Prueba cambiando tus filtros de búsqueda o agrega una nueva en el modo administrador.</p>
+        </div>
+
+    </section>
+
+    <!-- Sección Publica Tu Propiedad -->
+    <section id="publica" class="bg-navy-900 text-white py-16 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <span class="text-gold-400 font-semibold text-xs tracking-wider uppercase">¿Eres propietario?</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2 mb-4">Vende o Arrienda tu Propiedad con Nosotros</h2>
+                    <p class="text-slate-300 text-sm sm:text-base mb-6 leading-relaxed">
+                        Nos encargamos de toda la gestión: desde la evaluación comercial, fotografía profesional, difusión en portales destacados hasta la firma final del contrato ante notario.
+                    </p>
+                    <ul class="space-y-3 text-sm text-slate-300 mb-8">
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold-400"></i> Evaluación de precio de mercado sin costo.</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold-400"></i> Filtro riguroso de antecedentes para arrendatarios y compradores.</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-gold-400"></i> Asesoría legal y corretaje integral.</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white text-slate-800 p-6 sm:p-8 rounded-2xl shadow-xl">
+                    <h3 class="font-serif font-bold text-xl text-navy-900 mb-2">Ingresa tus datos de contacto</h3>
+                    <p class="text-xs text-slate-500 mb-6">Nos pondremos en contacto contigo a la brevedad para coordinar una visita.</p>
+                    <form onsubmit="handleOwnerFormSubmit(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Nombre Completo</label>
+                            <input type="text" required placeholder="Ej: Juan Pérez" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-900">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Teléfono Móvil</label>
+                                <input type="tel" required placeholder="+56 9 8765 4321" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-900">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-600 mb-1">Correo Electrónico</label>
+                                <input type="email" required placeholder="correo@ejemplo.com" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-900">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">Detalles de la propiedad (Ubicación, tipo, etc.)</label>
+                            <textarea rows="3" required placeholder="Tengo un departamento de 2 dormitorios en Las Condes que deseo arrendar..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-900"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-gold-500 hover:bg-gold-600 text-navy-950 font-bold py-3 rounded-lg text-sm transition shadow-md">
+                            Enviar Solicitud de Captación
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact section -->
+    <footer id="contacto" class="bg-navy-950 text-slate-400 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-gold-500 rounded flex items-center justify-center text-navy-950 font-serif font-bold">CLÉ</div>
+                    <span class="font-serif font-bold text-xl text-white">CLÉ Propiedades</span>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                    Corredora de propiedades dedicada a entregar un servicio personalizado, ágil y transparente para arriendos, ventas y administración de inmuebles.
+                </p>
+                <p class="text-xs text-slate-500">© <span id="yearSpan"></span> CLÉ Propiedades. Todos los derechos reservados.</p>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Contacto Directo</h4>
+                <ul class="space-y-2 text-xs">
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-gold-400"></i> Av. Apoquindo 4500, Las Condes, Santiago</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-phone text-gold-400"></i> +56 9 1234 5678 / +56 2 2987 6543</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-envelope text-gold-400"></i> contacto@clepropiedades.cl</li>
+                    <li class="flex items-center gap-2"><i class="fa-solid fa-clock text-gold-400"></i> Lunes a Viernes: 09:00 - 18:30 hrs</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-white mb-4 uppercase text-xs tracking-wider">Atención Rápidas</h4>
+                <p class="text-xs text-slate-400 mb-3">¿Tienes dudas o necesitas agendar una visita a la brevedad?</p>
+                <a href="https://wa.me/56912345678?text=Hola%20CL%C3%89%20Propiedades,%20deseo%20más%20información" target="_blank" class="inline-flex items-center gap-2 bg-emeraldCustom hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg text-xs transition">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Chatear por WhatsApp
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/56912345678?text=Hola%20CL%C3%89%20Propiedades,%20estoy%20interesado%20en%20sus%20propiedades" target="_blank" class="fixed bottom-6 right-6 z-50 bg-emeraldCustom hover:bg-emerald-700 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 group" title="Contactar por WhatsApp">
+        <i class="fa-brands fa-whatsapp text-3xl"></i>
+        <span class="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 ease-in-out whitespace-nowrap text-xs font-bold pl-0 group-hover:pl-2">
+            ¡Hablemos por WhatsApp!
+        </span>
+    </a>
+
+    <!-- MODAL: DETALLE DE PROPIEDAD (CLIENTE) -->
+    <div id="detailModal" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-fade-in">
+            <!-- Close Button -->
+            <button onclick="closeDetailModal()" class="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white w-9 h-9 rounded-full flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- Image & Header -->
+            <div class="relative h-64 sm:h-80 w-full bg-slate-900">
+                <img id="detailImage" src="" alt="Propiedad" class="w-full h-full object-cover">
+                <div class="absolute top-4 left-4">
+                    <span id="detailBadge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-gold-600"></span>
+                </div>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6 sm:p-8">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <h3 id="detailTitle" class="font-serif font-bold text-2xl text-navy-900"></h3>
+                        <p id="detailLocation" class="text-slate-500 text-sm flex items-center gap-1 mt-1">
+                            <i class="fa-solid fa-location-dot text-gold-500"></i> <span></span>
+                        </p>
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <span class="text-xs text-slate-400 block font-semibold">Valor publicativo</span>
+                        <span id="detailPrice" class="text-2xl font-bold text-emeraldCustom"></span>
+                    </div>
+                </div>
+
+                <!-- Features Badges -->
+                <div class="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl text-center mb-6 border border-slate-200">
+                    <div>
+                        <span class="text-slate-400 text-xs block"><i class="fa-solid fa-bed text-slate-600 mb-1"></i> Hab.</span>
+                        <span id="detailBedrooms" class="font-bold text-slate-800 text-sm"></span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 text-xs block"><i class="fa-solid fa-bath text-slate-600 mb-1"></i> Baños</span>
+                        <span id="detailBathrooms" class="font-bold text-slate-800 text-sm"></span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 text-xs block"><i class="fa-solid fa-ruler-combined text-slate-600 mb-1"></i> Superficie</span>
+                        <span id="detailMeters" class="font-bold text-slate-800 text-sm"></span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-8">
+                    <h4 class="font-bold text-navy-900 text-sm uppercase tracking-wider mb-2">Descripción de la Propiedad</h4>
+                    <p id="detailDescription" class="text-slate-600 text-sm leading-relaxed whitespace-pre-line"></p>
+                </div>
+
+                <!-- Contact CTA Box for this property -->
+                <div class="bg-navy-900 text-white p-5 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h5 class="font-bold text-sm">¿Te interesa esta propiedad?</h5>
+                        <p class="text-xs text-slate-300">Consulta disponibilidad o agenda una visita técnica.</p>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button id="detailWaBtn" onclick="" class="flex-1 sm:flex-none bg-emeraldCustom hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-lg text-xs transition flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-base"></i> Consultar WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: AGREGAR / EDITAR PROPIEDAD (ADMINISTRADOR) -->
+    <div id="propertyFormModal" class="fixed inset-0 bg-slate-900/70 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 sm:p-8 relative">
+            <button onclick="closePropertyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <h3 id="formModalTitle" class="font-serif font-bold text-2xl text-navy-900 mb-1">Agregar Nueva Propiedad</h3>
+            <p class="text-xs text-slate-500 mb-6">Completa el formulario para publicar un inmueble en la plataforma.</p>
+
+            <form id="propertyForm" onsubmit="saveProperty(event)" class="space-y-4">
+                <input type="hidden" id="formPropId">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Título de la Publicación *</label>
+                    <input type="text" id="formTitle" required placeholder="Ej. Moderno Departamento en Las Condes" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-navy-900">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Operación *</label>
+                        <select id="formOperation" required class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-navy-900">
+                            <option value="Venta">Venta</option>
+                            <option value="Arriendo">Arriendo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Precio (Ej: UF 4.500 o $650.000) *</label>
+                        <input type="text" id="formPrice" required placeholder="Ej. UF 3.800" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-navy-900">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Ubicación / Comuna *</label>
+                        <input type="text" id="formLocation" required placeholder="Ej. Vitacura" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-navy-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Dormitorios *</label>
+                        <input type="number" id="formBedrooms" min="0" required placeholder="Ej. 3" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-navy-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Baños *</label>
+                        <input type="number" id="formBathrooms" min="0" required placeholder="Ej. 2" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-navy-900">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Superficie Total (m²) *</label>
+                        <input type="text" id="formMeters" required placeholder="Ej. 85 m²" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-navy-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">URL Imagen Externa (Opcional)</label>
+                        <input type="url" id="formImage" placeholder="https://images.unsplash.com/..." oninput="handleUrlImageInput(this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-navy-900">
+                    </div>
+                </div>
+
+                <!-- Cargar Foto Local desde Celular/PC -->
+                <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Subir Imagen desde tu Dispositivo (PC/Celular)</label>
+                    <input type="file" id="formFileInput" accept="image/*" onchange="handleFileSelect(event)" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-navy-900 file:text-white hover:file:bg-navy-800 cursor-pointer">
+                    <p class="text-[10px] text-slate-400 mt-1">Formatos soportados: JPG, PNG, WEBP. Se guardará directamente en tu navegador.</p>
+                    
+                    <!-- Previsualizador de foto seleccionada -->
+                    <div id="imagePreviewContainer" class="mt-3 hidden">
+                        <span class="text-[11px] font-bold text-slate-600 block mb-1">Vista previa de la imagen:</span>
+                        <div class="relative w-full h-40 bg-slate-200 rounded-lg overflow-hidden border border-slate-300">
+                            <img id="imagePreview" src="" alt="Previsualización" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Descripción Completa *</label>
+                    <textarea id="formDescription" rows="4" required placeholder="Detalla las virtudes de la propiedad, gastos comunes, orientación..." class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-navy-900"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closePropertyModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="bg-navy-900 hover:bg-navy-800 text-white px-5 py-2 rounded-lg text-sm font-bold transition shadow-md">
+                        Guardar Propiedad
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 left-6 z-50 hidden bg-navy-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 text-sm animate-bounce">
+        <i class="fa-solid fa-circle-check text-emeraldCustom text-lg"></i>
+        <span id="toastMessage">Operación realizada con éxito</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // State Management
+        let isAdminMode = false;
+        let currentImageData = ""; // Almacena la imagen activa (Base64 o URL)
+
+        const DEFAULT_PROPERTIES = [
+            {
+                id: 1,
+                title: "Departamento Moderno con Vista Panorámica",
+                operation: "Venta",
+                price: "UF 5.200",
+                location: "Las Condes, Santiago",
+                bedrooms: 2,
+                bathrooms: 2,
+                meters: "78 m²",
+                image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
+                description: "Excelente departamento ubicado a pasos de Metro Manquehue. Cuenta con cocina americana equipada, amplios ventanales thermopane, terraza espaciosa con vista despejada hacia la cordillera. Edificio incluye piscina climatizada, gimnasio y conserjería 24/7."
+            },
+            {
+                id: 2,
+                title: "Casa Familiar en Condominio Cerrado",
+                operation: "Venta",
+                price: "UF 9.800",
+                location: "Lo Barnechea, Santiago",
+                bedrooms: 4,
+                bathrooms: 3,
+                meters: "210 m²",
+                image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80",
+                description: "Hermosa propiedad de 2 pisos en condominio consolidado con máxima seguridad. Gran jardín formado con quincho y piscina. Dormitorio principal en suite con walk-in closet, sala de estar en segundo nivel y estacionamiento para 3 vehículos."
+            },
+            {
+                id: 3,
+                title: "Departamento Amoblado Studio",
+                operation: "Arriendo",
+                price: "$480.000",
+                location: "Providencia, Santiago",
+                bedrooms: 1,
+                bathrooms: 1,
+                meters: "38 m²",
+                image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+                description: "Acogedor departamento ideal para ejecutivos o estudiantes. Totalmente equipado y amoblado con diseño contemporáneo. Excelente conectividad a pasos de metro Tobalaba, restaurantes y servicios. Gastos comunes aprox: $60.000."
+            },
+            {
+                id: 4,
+                title: "Oficina Comercial en Sector Financiero",
+                operation: "Arriendo",
+                price: "UF 35 / mes",
+                location: "El Golf, Las Condes",
+                bedrooms: 3,
+                bathrooms: 2,
+                meters: "95 m²",
+                image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+                description: "Habilitada con privados, sala de reuniones y área libre de trabajo. Incluye 2 estacionamientos subterráneos y 1 bodega. Edificio corporativo categoría A con control de acceso biométrico."
+            }
+        ];
+
+        let properties = [];
+
+        // Load Properties from LocalStorage or Default
+        function loadProperties() {
+            const stored = localStorage.getItem('cle_properties');
+            if (stored) {
+                properties = JSON.parse(stored);
+            } else {
+                properties = [...DEFAULT_PROPERTIES];
+                saveToLocalStorage();
+            }
+            renderProperties(properties);
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('cle_properties', JSON.stringify(properties));
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('yearSpan').textContent = new Date().getFullYear();
+            loadProperties();
+        });
+
+        // Toggle Admin / Public View Mode
+        function toggleViewMode() {
+            isAdminMode = !isAdminMode;
+            const viewText = document.getElementById('viewModeText');
+            const adminBadge = document.getElementById('adminBadge');
+            const navAddBtn = document.getElementById('navAddPropBtn');
+            const catalogSubtitle = document.getElementById('catalogSubtitle');
+
+            if (isAdminMode) {
+                viewText.textContent = "Ver como Cliente";
+                adminBadge.classList.remove('hidden');
+                navAddBtn.classList.remove('hidden');
+                catalogSubtitle.textContent = "Modo edición: Puedes agregar, editar o eliminar propiedades";
+                showToast("Modo Administrador activado");
+            } else {
+                viewText.textContent = "Cambiar a Modo Administrador";
+                adminBadge.classList.add('hidden');
+                navAddBtn.classList.add('hidden');
+                catalogSubtitle.textContent = "Explora las publicaciones disponibles actualmente";
+                showToast("Modo Cliente activado");
+            }
+            renderProperties(properties);
+        }
+
+        // Handle Image File Upload (Base64)
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentImageData = e.target.result;
+                document.getElementById('formImage').value = ''; // Limpiar campo URL
+                showImagePreview(currentImageData);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Handle External Image URL Input
+        function handleUrlImageInput(url) {
+            if (url.trim() !== '') {
+                currentImageData = url.trim();
+                document.getElementById('formFileInput').value = ''; // Limpiar input file
+                showImagePreview(currentImageData);
+            } else {
+                hideImagePreview();
+            }
+        }
+
+        function showImagePreview(src) {
+            const preview = document.getElementById('imagePreview');
+            const container = document.getElementById('imagePreviewContainer');
+            preview.src = src;
+            container.classList.remove('hidden');
+        }
+
+        function hideImagePreview() {
+            const container = document.getElementById('imagePreviewContainer');
+            document.getElementById('imagePreview').src = '';
+            container.classList.add('hidden');
+        }
+
+        // Modal Property Form Logic (Admin Add/Edit)
+        function openPropertyModal() {
+            document.getElementById('formModalTitle').textContent = "Agregar Nueva Propiedad";
+            document.getElementById('propertyForm').reset();
+            document.getElementById('formPropId').value = "";
+            currentImageData = "";
+            hideImagePreview();
+            document.getElementById('propertyFormModal').classList.remove('hidden');
+        }
+
+        function openEditPropertyModal(id) {
+            const prop = properties.find(p => p.id === id);
+            if (!prop) return;
+
+            document.getElementById('formModalTitle').textContent = "Editar Propiedad";
+            document.getElementById('formPropId').value = prop.id;
+            document.getElementById('formTitle').value = prop.title;
+            document.getElementById('formOperation').value = prop.operation;
+            document.getElementById('formPrice').value = prop.price;
+            document.getElementById('formLocation').value = prop.location;
+            document.getElementById('formBedrooms').value = prop.bedrooms;
+            document.getElementById('formBathrooms').value = prop.bathrooms;
+            document.getElementById('formMeters').value = prop.meters;
+            document.getElementById('formDescription').value = prop.description;
+
+            // Cargar imagen previa (URL o Base64)
+            currentImageData = prop.image || '';
+            if (currentImageData.startsWith('http')) {
+                document.getElementById('formImage').value = currentImageData;
+            } else {
+                document.getElementById('formImage').value = '';
+            }
+
+            if (currentImageData) {
+                showImagePreview(currentImageData);
+            } else {
+                hideImagePreview();
+            }
+
+            document.getElementById('propertyFormModal').classList.remove('hidden');
+        }
+
+        function closePropertyModal() {
+            document.getElementById('propertyFormModal').classList.add('hidden');
+        }
+
+        function saveProperty(event) {
+            event.preventDefault();
+            const id = document.getElementById('formPropId').value;
+            const title = document.getElementById('formTitle').value;
+            const operation = document.getElementById('formOperation').value;
+            const price = document.getElementById('formPrice').value;
+            const location = document.getElementById('formLocation').value;
+            const bedrooms = parseInt(document.getElementById('formBedrooms').value);
+            const bathrooms = parseInt(document.getElementById('formBathrooms').value);
+            const meters = document.getElementById('formMeters').value;
+            const description = document.getElementById('formDescription').value;
+
+            // Si no subió foto local ni ingresó URL, asignamos una imagen por defecto
+            const image = currentImageData || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80';
+
+            if (id) {
+                // Update
+                const index = properties.findIndex(p => p.id == id);
+                if (index !== -1) {
+                    properties[index] = { id: parseInt(id), title, operation, price, location, bedrooms, bathrooms, meters, image, description };
+                    showToast("Propiedad actualizada correctamente");
+                }
+            } else {
+                // Add New
+                const newId = properties.length > 0 ? Math.max(...properties.map(p => p.id)) + 1 : 1;
+                properties.unshift({ id: newId, title, operation, price, location, bedrooms, bathrooms, meters, image, description });
+                showToast("Nueva propiedad agregada exitosamente");
+            }
+
+            saveToLocalStorage();
+            applyFilters();
+            closePropertyModal();
+        }
+
+        // Render Property Cards
+        function renderProperties(items) {
+            const grid = document.getElementById('propertiesGrid');
+            const noResults = document.getElementById('noResults');
+
+            grid.innerHTML = '';
+
+            if (items.length === 0) {
+                noResults.classList.remove('hidden');
+                return;
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            items.forEach(prop => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100 flex flex-col transition hover:shadow-2xl hover:-translate-y-1 relative group";
+
+                const isVenta = prop.operation.toLowerCase() === 'venta';
+                const badgeBg = isVenta ? 'bg-gold-600' : 'bg-navy-900';
+
+                card.innerHTML = `
+                    <div class="relative h-56 overflow-hidden bg-slate-200">
+                        <img src="${prop.image || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80'}" 
+                             alt="${prop.title}" 
+                             class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
+                        <div class="absolute top-3 left-3">
+                            <span class="${badgeBg} text-white font-bold text-xs uppercase px-3 py-1 rounded-full shadow-md">
+                                ${prop.operation}
+                            </span>
+                        </div>
+                        <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md text-emeraldCustom font-bold text-sm px-3 py-1 rounded-lg shadow-md">
+                            ${prop.price}
+                        </div>
+
+                        ${isAdminMode ? `
+                            <div class="absolute top-3 right-3 flex gap-1 bg-white/90 p-1 rounded-lg shadow-md">
+                                <button onclick="openEditPropertyModal(${prop.id})" class="bg-amber-500 hover:bg-amber-600 text-white w-8 h-8 rounded flex items-center justify-center text-xs transition" title="Editar">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button onclick="deleteProperty(${prop.id})" class="bg-rose-600 hover:bg-rose-700 text-white w-8 h-8 rounded flex items-center justify-center text-xs transition" title="Eliminar">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="p-5 flex-grow flex flex-col justify-between">
+                        <div>
+                            <h3 class="font-serif font-bold text-lg text-navy-900 line-clamp-1 mb-1">${prop.title}</h3>
+                            <p class="text-xs text-slate-500 flex items-center gap-1 mb-4">
+                                <i class="fa-solid fa-location-dot text-gold-500"></i> ${prop.location}
+                            </p>
+                            <p class="text-xs text-slate-600 line-clamp-2 mb-4 leading-relaxed">${prop.description}</p>
+                        </div>
+
+                        <div>
+                            <div class="grid grid-cols-3 gap-2 border-t border-b border-slate-100 py-3 mb-4 text-center text-xs text-slate-600">
+                                <div><i class="fa-solid fa-bed text-slate-400"></i> <span class="font-bold">${prop.bedrooms}</span> Hab.</div>
+                                <div><i class="fa-solid fa-bath text-slate-400"></i> <span class="font-bold">${prop.bathrooms}</span> Baños</div>
+                                <div><i class="fa-solid fa-ruler-combined text-slate-400"></i> <span class="font-bold">${prop.meters}</span></div>
+                            </div>
+
+                            <button onclick="openDetailModal(${prop.id})" class="w-full bg-slate-100 hover:bg-navy-900 hover:text-white text-navy-900 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-eye"></i> Ver Detalles
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Apply Filters
+        function applyFilters() {
+            const operation = document.getElementById('filterOperation').value;
+            const bedrooms = document.getElementById('filterBedrooms').value;
+            const search = document.getElementById('filterSearch').value.toLowerCase();
+
+            const filtered = properties.filter(prop => {
+                const matchOp = (operation === 'todos') || (prop.operation === operation);
+                const matchBeds = (bedrooms === 'todos') || (prop.bedrooms >= parseInt(bedrooms));
+                const matchSearch = (prop.title.toLowerCase().includes(search)) || (prop.location.toLowerCase().includes(search));
+
+                return matchOp && matchBeds && matchSearch;
+            });
+
+            renderProperties(filtered);
+        }
+
+        function filterType(type) {
+            const selectOp = document.getElementById('filterOperation');
+            if (type === 'venta') selectOp.value = 'Venta';
+            else if (type === 'arriendo') selectOp.value = 'Arriendo';
+            else selectOp.value = 'todos';
+            applyFilters();
+        }
+
+        function resetFilters() {
+            document.getElementById('filterOperation').value = 'todos';
+            document.getElementById('filterBedrooms').value = 'todos';
+            document.getElementById('filterSearch').value = '';
+            renderProperties(properties);
+        }
+
+        // Modal Detail Logic
+        function openDetailModal(id) {
+            const prop = properties.find(p => p.id === id);
+            if (!prop) return;
+
+            document.getElementById('detailTitle').textContent = prop.title;
+            document.getElementById('detailLocation').querySelector('span').textContent = prop.location;
+            document.getElementById('detailPrice').textContent = prop.price;
+            document.getElementById('detailBadge').textContent = prop.operation;
+            document.getElementById('detailBedrooms').textContent = `${prop.bedrooms} Dormitorios`;
+            document.getElementById('detailBathrooms').textContent = `${prop.bathrooms} Baños`;
+            document.getElementById('detailMeters').textContent = prop.meters;
+            document.getElementById('detailDescription').textContent = prop.description;
+            document.getElementById('detailImage').src = prop.image || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80';
+
+            const message = encodeURIComponent(`Hola CLÉ Propiedades, me interesa obtener información sobre la propiedad: "${prop.title}" (${prop.price}) en ${prop.location}.`);
+            document.getElementById('detailWaBtn').onclick = () => {
+                window.open(`https://wa.me/56912345678?text=${message}`, '_blank');
+            };
+
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        function deleteProperty(id) {
+            if (confirm("¿Estás seguro de que deseas eliminar esta publicación?")) {
+                properties = properties.filter(p => p.id !== id);
+                saveToLocalStorage();
+                applyFilters();
+                showToast("Propiedad eliminada");
+            }
+        }
+
+        // Contact Captation Form Handlers
+        function handleOwnerFormSubmit(event) {
+            event.preventDefault();
+            alert("¡Gracias por contactarnos! Un gestor inmobiliario de CLÉ Propiedades se comunicará contigo en breve.");
+            event.target.reset();
+        }
+
+        // Toast Helper
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
