@@ -111,7 +111,7 @@
             color: white;
         }
 
-        /* Barra de administrador secreta (Oculta por defecto) */
+        /* Toolbar de Admin (Oculta por defecto para los clientes) */
         #admin-toolbar {
             display: none;
             background-color: #090d16;
@@ -123,7 +123,7 @@
 </head>
 <body>
 
-    <!-- BARRA DE ADMINISTRADOR (SOLO SE ACTIVA CON #admin) -->
+    <!-- BARRA DE ADMINISTRADOR (SOLO CON #admin) -->
     <div id="admin-toolbar" class="sticky-top">
         <div class="container d-flex justify-content-between align-items-center">
             <div>
@@ -168,7 +168,6 @@
             <h1 class="display-4 fw-bold mb-3">Gestión Inmobiliaria Transparente y Profesional</h1>
             <p class="lead mb-5 text-light opacity-85">Encuentra tu próximo hogar o invierte con asesoría experta de principio a fin.</p>
             
-            <!-- BUSCADOR RÁPIDO -->
             <div class="row justify-content-center">
                 <div class="col-lg-10">
                     <div class="card p-3 shadow-lg border-0 bg-white rounded-4 text-dark">
@@ -214,12 +213,9 @@
                 <h2 class="fw-bold mb-1">Catálogo de Propiedades</h2>
                 <p class="text-muted mb-0">Explora las publicaciones disponibles actualmente</p>
             </div>
-            <div id="admin-actions-hint"></div>
         </div>
 
-        <div class="row g-4" id="propertiesGrid">
-            <!-- Las propiedades se cargan dinámicamente con JavaScript -->
-        </div>
+        <div class="row g-4" id="propertiesGrid"></div>
     </main>
 
     <!-- SECCIÓN NOSOTROS -->
@@ -232,11 +228,6 @@
                 <div class="col-lg-6 ps-lg-5">
                     <h2 class="fw-bold mb-3">Sobre CLÉ Propiedades</h2>
                     <p class="text-muted">Somos una corredora de propiedades comprometida con entregar un servicio cercano, seguro y transparente. Te acompañamos en cada etapa del proceso, ya sea que busques comprar tu casa propia, arrendar o vender tu patrimonio con la mejor rentabilidad del mercado.</p>
-                    <ul class="list-unstyled text-muted mb-4">
-                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Tasaciones comerciales precisas</li>
-                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Asesoría legal y de contratos</li>
-                        <li class="mb-2"><i class="fa-solid fa-check text-success me-2"></i> Difusión en portales especializados</li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -279,16 +270,16 @@
     <footer class="bg-dark text-white py-4">
         <div class="container text-center">
             <p class="mb-1 fw-bold">CLÉ Propiedades</p>
-            <p class="text-white-50 small mb-0">© 2026 Todos los derechos reservados. Diseñado para el mercado inmobiliario.</p>
+            <p class="text-white-50 small mb-0">© 2026 Todos los derechos reservados.</p>
         </div>
     </footer>
 
-    <!-- BOTÓN FLOTANTE WHATSAPP -->
-    <a href="https://wa.me/56912345678?text=Hola,%20quisiera%20más%20información%20sobre%20las%20propiedades" target="_blank" class="whatsapp-float" title="Escríbenos por WhatsApp">
+    <!-- BOTÓN WHATSAPP -->
+    <a href="https://wa.me/56912345678?text=Hola,%20quisiera%20más%20información%20sobre%20las%20propiedades" target="_blank" class="whatsapp-float">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
-    <!-- MODAL DETALLE PROPIEDAD -->
+    <!-- MODAL DETALLE -->
     <div class="modal fade" id="propertyModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 rounded-4 overflow-hidden">
@@ -305,7 +296,7 @@
                             <span id="modalBadge" class="badge badge-operation"></span>
                             <span id="modalPrice" class="price-tag"></span>
                         </div>
-                        <h4 id="modalLocation" class="text-muted mb-3 fs-6"><i class="fa-solid fa-location-dot text-danger me-1"></i> <span id="modalLocationText"></span></h4>
+                        <h4 class="text-muted mb-3 fs-6"><i class="fa-solid fa-location-dot text-danger me-1"></i> <span id="modalLocationText"></span></h4>
                         <div class="row text-center bg-light rounded-3 p-3 mb-4">
                             <div class="col-4 border-end">
                                 <i class="fa-solid fa-bed text-primary fs-5 mb-1"></i>
@@ -333,7 +324,7 @@
         </div>
     </div>
 
-    <!-- MODAL EDITAR / CREAR PROPIEDAD (ADMIN) -->
+    <!-- MODAL ADMIN -->
     <div class="modal fade" id="adminModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4">
@@ -381,7 +372,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-semibold">Subir Imagen desde tu Dispositivo</label>
-                            <input type="file" class="form-control" id="propImageFile" accept="image/*" onchange="previewLocalImage(event)">
+                            <input type="file" class="form-control" id="propImageFile" accept="image/*" onchange="previewAndCompressImage(event)">
                             <div class="form-text">O pega una URL de imagen abajo:</div>
                             <input type="text" class="form-control mt-1" id="propImage" placeholder="https://...">
                             <div id="imagePreviewContainer" class="mt-2 text-center" style="display:none;">
@@ -392,14 +383,13 @@
                             <label class="form-label fw-semibold">Descripción detallada</label>
                             <textarea class="form-control" id="propDesc" rows="3" required placeholder="Detalles de la propiedad..."></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Guardar Propiedad</button>
+                        <button type="submit" id="saveBtn" class="btn btn-primary w-100 py-2 fw-semibold">Guardar Propiedad</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script>
         const ADMIN_PASSWORD = "admin123";
@@ -429,28 +419,21 @@
                 area: "65 m²",
                 image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80",
                 desc: "Hermoso departamento luminoso con cocina integrada, conexión a lavadora, bodega y estacionamiento incluido. Edificio con piscina y quincho."
-            },
-            {
-                id: 3,
-                title: "Parcela de Agrado con Vista al Valle",
-                operation: "Venta",
-                price: "4.200 UF",
-                location: "Curacaví",
-                rooms: 3,
-                baths: 2,
-                area: "5.000 m²",
-                image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",
-                desc: "Tranquilidad absoluta rodeada de naturaleza. Cuenta con rol propio, agua potable, electricidad subterránea y acceso controlado."
             }
         ];
 
         let properties = JSON.parse(localStorage.getItem('cle_properties')) || defaultProperties;
 
         function saveToLocalStorage() {
-            localStorage.setItem('cle_properties', JSON.stringify(properties));
+            try {
+                localStorage.setItem('cle_properties', JSON.stringify(properties));
+                return true;
+            } catch (e) {
+                alert("La foto elegida es demasiado pesada. El sistema la ha comprimido, por favor intenta presionar 'Guardar Propiedad' nuevamente.");
+                return false;
+            }
         }
 
-        // Sistema de Acceso Admin por #admin
         function checkAdminRoute() {
             if (window.location.hash === '#admin') {
                 let password = prompt("Ingrese la contraseña de Administrador:");
@@ -539,43 +522,37 @@
             renderProperties();
         }
 
-        function openDetail(id) {
-            const prop = properties.find(p => p.id === id);
-            if (!prop) return;
-
-            document.getElementById('modalTitle').innerText = prop.title;
-            document.getElementById('modalImg').src = prop.image;
-            document.getElementById('modalBadge').innerText = prop.operation;
-            document.getElementById('modalBadge').className = `badge badge-operation ${prop.operation.toLowerCase() === 'venta' ? 'badge-venta' : 'badge-arriendo'}`;
-            document.getElementById('modalPrice').innerText = prop.price;
-            document.getElementById('modalLocationText').innerText = prop.location;
-            document.getElementById('modalRooms').innerText = prop.rooms;
-            document.getElementById('modalBaths').innerText = prop.baths;
-            document.getElementById('modalArea').innerText = prop.area;
-            document.getElementById('modalDesc').innerText = prop.desc;
-
-            const waText = encodeURIComponent(`Hola, me interesa la propiedad "${prop.title}" (${prop.price}) publicada en CLÉ Propiedades.`);
-            document.getElementById('modalWhatsappBtn').href = `https://wa.me/56912345678?text=${waText}`;
-
-            new bootstrap.Modal(document.getElementById('propertyModal')).show();
-        }
-
-        function openPropertyModal() {
-            document.getElementById('propertyForm').reset();
-            document.getElementById('propId').value = '';
-            document.getElementById('adminModalTitle').innerText = 'Nueva Propiedad';
-            document.getElementById('imagePreviewContainer').style.display = 'none';
-            new bootstrap.Modal(document.getElementById('adminModal')).show();
-        }
-
-        function previewLocalImage(event) {
+        // FUNCIÓN DE COMPRESIÓN DE IMAGEN AUTOMÁTICA
+        function previewAndCompressImage(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('propImage').value = e.target.result;
-                    document.getElementById('imagePreview').src = e.target.result;
-                    document.getElementById('imagePreviewContainer').style.display = 'block';
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const maxWidth = 800; // Tamaño máximo en píxeles
+                        const scaleSize = maxWidth / img.width;
+                        
+                        if (scaleSize < 1) {
+                            canvas.width = maxWidth;
+                            canvas.height = img.height * scaleSize;
+                        } else {
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                        }
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        // Comprimir a JPEG con calidad 0.7
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                        
+                        document.getElementById('propImage').value = compressedBase64;
+                        document.getElementById('imagePreview').src = compressedBase64;
+                        document.getElementById('imagePreviewContainer').style.display = 'block';
+                    }
                 }
                 reader.readAsDataURL(file);
             }
@@ -611,9 +588,39 @@
                 properties.unshift(newProp);
             }
 
-            saveToLocalStorage();
-            renderProperties();
-            bootstrap.Modal.getInstance(document.getElementById('adminModal')).hide();
+            if (saveToLocalStorage()) {
+                renderProperties();
+                bootstrap.Modal.getInstance(document.getElementById('adminModal')).hide();
+            }
+        }
+
+        function openDetail(id) {
+            const prop = properties.find(p => p.id === id);
+            if (!prop) return;
+
+            document.getElementById('modalTitle').innerText = prop.title;
+            document.getElementById('modalImg').src = prop.image;
+            document.getElementById('modalBadge').innerText = prop.operation;
+            document.getElementById('modalBadge').className = `badge badge-operation ${prop.operation.toLowerCase() === 'venta' ? 'badge-venta' : 'badge-arriendo'}`;
+            document.getElementById('modalPrice').innerText = prop.price;
+            document.getElementById('modalLocationText').innerText = prop.location;
+            document.getElementById('modalRooms').innerText = prop.rooms;
+            document.getElementById('modalBaths').innerText = prop.baths;
+            document.getElementById('modalArea').innerText = prop.area;
+            document.getElementById('modalDesc').innerText = prop.desc;
+
+            const waText = encodeURIComponent(`Hola, me interesa la propiedad "${prop.title}" (${prop.price}) en CLÉ Propiedades.`);
+            document.getElementById('modalWhatsappBtn').href = `https://wa.me/56912345678?text=${waText}`;
+
+            new bootstrap.Modal(document.getElementById('propertyModal')).show();
+        }
+
+        function openPropertyModal() {
+            document.getElementById('propertyForm').reset();
+            document.getElementById('propId').value = '';
+            document.getElementById('adminModalTitle').innerText = 'Nueva Propiedad';
+            document.getElementById('imagePreviewContainer').style.display = 'none';
+            new bootstrap.Modal(document.getElementById('adminModal')).show();
         }
 
         function editProperty(id) {
@@ -648,14 +655,10 @@
 
         function handleContact(event) {
             event.preventDefault();
-            const name = document.getElementById('contactName').value;
-            const info = document.getElementById('contactInfo').value;
-            const msg = document.getElementById('contactMsg').value;
-            alert(`¡Gracias ${name}! Tu mensaje ha sido enviado con éxito. Nos pondremos en contacto contigo a la brevedad.`);
+            alert("Mensaje enviado con éxito");
             event.target.reset();
         }
 
-        // Inicializar
         renderProperties();
         checkAdminRoute();
     </script>
