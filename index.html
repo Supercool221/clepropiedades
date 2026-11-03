@@ -111,7 +111,6 @@
             color: white;
         }
 
-        /* Toolbar de Admin (Oculta por defecto para los clientes) */
         #admin-toolbar {
             display: none;
             background-color: #090d16;
@@ -507,7 +506,17 @@
 
             const filtered = properties.filter(p => {
                 const matchOp = op === "" || p.operation === op;
-                const matchRooms = rooms === "" || p.rooms.toString() === rooms;
+                
+                // Corrección para que 4+ funcione correctamente
+                let matchRooms = true;
+                if (rooms !== "") {
+                    if (rooms === "4") {
+                        matchRooms = p.rooms >= 4;
+                    } else {
+                        matchRooms = p.rooms.toString() === rooms;
+                    }
+                }
+
                 const matchSearch = p.title.toLowerCase().includes(search) || p.location.toLowerCase().includes(search) || p.desc.toLowerCase().includes(search);
                 return matchOp && matchRooms && matchSearch;
             });
@@ -522,7 +531,6 @@
             renderProperties();
         }
 
-        // FUNCIÓN DE COMPRESIÓN DE IMAGEN AUTOMÁTICA
         function previewAndCompressImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -532,7 +540,7 @@
                     img.src = e.target.result;
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
-                        const maxWidth = 800; // Tamaño máximo en píxeles
+                        const maxWidth = 800;
                         const scaleSize = maxWidth / img.width;
                         
                         if (scaleSize < 1) {
@@ -546,7 +554,6 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                        // Comprimir a JPEG con calidad 0.7
                         const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
                         
                         document.getElementById('propImage').value = compressedBase64;
